@@ -1,10 +1,7 @@
 name: myfirst
 #to push anything to this branch
 on: 
-  #push:
-  schedule:
-    - cron: '*/5 * * * *' # this will run the workflow every day at midnight
-  workflow_dispatch:
+  push:
 
 
 jobs:
