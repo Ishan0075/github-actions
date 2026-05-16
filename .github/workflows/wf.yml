@@ -1,7 +1,7 @@
 name: myfirst
 #to push anything to this branch
 on: 
-  push:
+  #push:
   schedule:
     - cron: '*/5 * * * *' # this will run the workflow every day at midnight
   workflow_dispatch:
@@ -12,35 +12,16 @@ jobs:
    name: JOB1
    runs-on: ubuntu-slim
    steps:
-     - name: Running single command in job1
-       run: echo "Hi this is my first worklow"
-     - name: checking OS release for gitHub hosted runner
-       run: cat /etc/os-release
-     - name: calling sleep
-       run: sleep 20
-
- job2:
-    name: JOB2
-    runs-on: ubuntu-slim
-    steps:
-      - name: Checking the hostname for runner
-        run: hostname
-      - name: Running multiple commands
+     - name: step-1
         run: |
-          echo "Hi from Ishan Sharma"
-          sleep 20
-
- job3:
-    name: JOB3
-    needs: job1
-    runs-on: ubuntu-slim
-    steps:
-     - name: job with single dependency
-       run: sleep 10
- job4:
-    name: JOB4
-    needs: [job1, job2, job3]
-    runs-on: ubuntu-slim
-    steps:
-      - name: job for multiple dependencies
-        run: sleep 10
+          pwd
+          ls -lrt
+          hostname
+     - name: checkout
+       uses: actions/checkout@v5.0.0
+     - name: step-3
+       run: |
+         pwd
+         ls -lrt
+         hostname
+      
