@@ -19,8 +19,9 @@ jobs:
      - name: step-3
        run: |
          echo `pwd` >> myartifact.txt
-         ls -lrt
-         hostname
+         mkdir artifacts
+         echo `ls -lrt` >> artifacts/list.txt
+         echo `hostname` >> artifacts/hostname.txt
      - name: upload-artifact
        uses: actions/upload-artifact@v5.0.0
        with:
