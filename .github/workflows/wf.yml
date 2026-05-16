@@ -3,7 +3,9 @@ name: myfirst
 on: 
  # push:
   schedule:
-    - cron: '*/5 * * * *' # this will run the workflow every day at midnight
+    - cron: '*5 * * * *' # this will run the workflow every day at midnight
+  workflow_dispatch:
+
 
 jobs:
  job1:
