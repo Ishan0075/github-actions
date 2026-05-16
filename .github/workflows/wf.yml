@@ -1,6 +1,9 @@
 name: myfirst
 #to push anything to this branch
-on: push
+on: 
+ # push:
+  schedule:
+    - cron: '*/1 * * * *' # this will run the workflow every day at midnight
 
 jobs:
  job1:
