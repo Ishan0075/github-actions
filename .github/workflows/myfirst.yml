@@ -2,3 +2,12 @@ name: myfirst
 #to push anything to this branch
 on: push
 
+jobs:
+ job1:
+   name: JOB1
+   runs-on: ubuntu-slim
+   steps:
+     - name: Running single command in job1
+       run: echo "Hi this is my first worklow"
+     - name: checking OS release for gitHub hosted runner
+       run: cat /etc/os-release
