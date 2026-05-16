@@ -11,3 +11,16 @@ jobs:
        run: echo "Hi this is my first worklow"
      - name: checking OS release for gitHub hosted runner
        run: cat /etc/os-release
+     - name: calling sleep
+       run: sleep 20
+
+ job2:
+    name: JOB2
+    runs-on: ubuntu-slim
+    steps:
+      - name: Checking the hostname for runner
+        run: hostname
+      - name: Running multiple commands
+        run: |
+          echo "Hi from Ishan Sharma"
+          sleep 20
