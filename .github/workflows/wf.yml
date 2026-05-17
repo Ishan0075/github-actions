@@ -70,7 +70,7 @@ jobs:
          pwd
          ls -lrt
      - name: refering env variable
-        run: |
+       run: |
           echo "[INFO]env type is $ENV_TYPE with app user $APP_USER"
           echo "[INFO]once deployed app will be running on port $APP_PORT"
 
