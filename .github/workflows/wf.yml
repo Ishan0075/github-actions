@@ -11,7 +11,7 @@ on:
     # - dev
 
 env:
-   ENV_TYPE: dev
+   ENV_TYPE: Dev
    APP_USER: ishan0075
    APP_PORT: 80
 
