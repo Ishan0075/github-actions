@@ -89,23 +89,30 @@ jobs:
         echo "[INFO] current step is running on ${{ runner.os }}"
         echo "[INFO] Current job  ID is ${{ job.check_run_id }}"
 
-#  job3:
-#   name: JOB3
-#   needs: job1
-#   runs-on: ubuntu-slim
-#   steps:
-#      - name: checking the current directory
-#        run: |
-#           pwd
-#           ls -lrt
-#      - name: download-directory
-#        uses: actions/download-artifact@v5.0.0
-#        with:
-#          name: directory_artifacts
-#      - name: checking current directory post downlaod
-#        run: |
-#          pwd
-#          ls -lrt
+ staging:
+  name: stag_deploy
+  needs: job1
+  runs-on: ubuntu-slim
+  steps:
+     - name: refering env variable
+       run: echo "[INFO] running deployment on ${{ vars.HOST }} using $ {{ vars.USER }}" 
+     - name: referencing env secrets
+       uses: echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}"
+  environment:
+     name: STAGING
+
+
+ production:
+  name: prod_deploy
+  needs: job1
+  runs-on: ubuntu-slim
+  steps:
+     - name: refering env variable
+       run: echo "[INFO] running deployment on ${{ vars.HOST }} using $ {{ vars.USER }}" 
+     - name: referencing env secrets
+       uses: echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}"
+  environment:
+     name: PRODUCTION
 
 #  job4:
 #   name: JOB4
