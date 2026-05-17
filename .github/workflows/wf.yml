@@ -2,6 +2,7 @@ name: myfirst
 #to push anything to this branch
 on: 
   push:
+    - dev
 
 
 jobs:
@@ -44,54 +45,3 @@ jobs:
        run: |
          pwd
          ls -lrt
-
-
- job3:
-  name: JOB3
-  needs: job1
-  runs-on: ubuntu-slim
-  steps:
-     - name: checking the current directory
-       run: |
-          pwd
-          ls -lrt
-     - name: download-directory
-       uses: actions/download-artifact@v5.0.0
-       with:
-         name: directory_artifacts
-     - name: checking current directory post downlaod
-       run: |
-         pwd
-         ls -lrt
-
- job4:
-  name: JOB4
-  needs: job1
-  runs-on: ubuntu-slim
-  steps:
-     - name: checking custom folder for download
-       run: |
-          mkdir -p single_file
-          mkdir -p download_directory
-     - name: checking the current directory
-       run: |
-          pwd
-          ls -lrt 
-     - name: Download single file artifact
-       uses: actions/download-artifact@v5.0.0
-       with:
-         name: single_file
-         path: single_file
-
-     - name: Download directory artifact
-       uses: actions/download-artifact@v5.0.0
-       with:
-          name: directory_artifacts
-          path: download_directory
-     - name: checking current directory post downlaod
-       run: |
-         pwd
-         echo "single file content"
-         ls -lrt single_file
-         echo "checking directory artifact content"
-         ls -lrt download_directory
