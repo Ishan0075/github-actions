@@ -97,7 +97,7 @@ jobs:
      - name: refering env variable
        run: echo "[INFO] running deployment on ${{ vars.HOST }} using $ {{ vars.USER }}" 
      - name: referencing env secrets
-       uses: echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}"
+       run: echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}"
   environment:
      name: STAGING
 
@@ -110,7 +110,7 @@ jobs:
      - name: refering env variable
        run: echo "[INFO] running deployment on ${{ vars.HOST }} using $ {{ vars.USER }}" 
      - name: referencing env secrets
-       uses: echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}"
+       run: echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}"
   environment:
      name: PRODUCTION
 
