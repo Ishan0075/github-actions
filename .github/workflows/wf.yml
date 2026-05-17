@@ -95,7 +95,7 @@ jobs:
   runs-on: ubuntu-slim
   steps:
      - name: refering env variable
-       run: echo "[INFO] running deployment on ${{ vars.HOST }} using $ {{ vars.USER }}" 
+       run: echo "[INFO] running deployment on ${{ vars.HOST }} using ${{ vars.USER }}" 
      - name: referencing env secrets
        run: echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}"
   environment:
@@ -108,7 +108,7 @@ jobs:
   runs-on: ubuntu-slim
   steps:
      - name: refering env variable
-       run: echo "[INFO] running deployment on ${{ vars.HOST }} using $ {{ vars.USER }}" 
+       run: echo "[INFO] running deployment on ${{ vars.HOST }} using ${{ vars.USER }}" 
      - name: referencing env secrets
        run: echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}"
   environment:
