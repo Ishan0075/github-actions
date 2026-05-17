@@ -44,7 +44,7 @@ jobs:
   name: JOB2
   needs: job1
   runs-on: ubuntu-slim
-   steps:
+  steps:
      - name: step-1
        run: |
           pwd
