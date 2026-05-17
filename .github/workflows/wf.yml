@@ -85,7 +85,6 @@ jobs:
   steps:
     - name: refering context or in-built variables
       run: |
-        echo "[INFO] triggered by ${{ git.event_name }}"
         echo "[INFO] new changes done by  by ${{ github.actor }} in ${{ github.ref_name }}"
         echo"[INFO] current step is running on & {{ runner.os }}"
         echo "[INFO] Current job  ID is ${{ job.check_run_id }}"
