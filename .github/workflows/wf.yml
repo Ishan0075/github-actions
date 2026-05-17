@@ -10,7 +10,6 @@ on:
     - main
     # - dev
 
-
 jobs:
  job1:
    name: JOB1
