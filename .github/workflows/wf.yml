@@ -57,3 +57,22 @@ jobs:
        run: |
          pwd
          ls -lrt
+
+
+ job3:
+  name: JOB3
+  needs: job1
+  runs-on: ubuntu-slim
+  steps:
+     - name: step-1
+       run: |
+          pwd
+          ls -lrt
+     - name: download-directory
+       uses: actions/download-artifact@v5.0.0
+       with:
+         name: directory_artifacts
+     - name: checking current directory post downlaod
+       run: |
+         pwd
+         ls -lrt
