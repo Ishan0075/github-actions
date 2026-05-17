@@ -64,6 +64,8 @@ jobs:
        run: |
          pwd
          ls -lrt
+     - name: for PR demo
+       run: exit 1
 
 
  job3:
