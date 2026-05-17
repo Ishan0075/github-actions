@@ -2,7 +2,8 @@ name: myfirst
 #to push anything to this branch
 on: 
   push:
-    - dev
+   branches: 
+       - dev
 
 
 jobs:
