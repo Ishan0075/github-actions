@@ -41,8 +41,9 @@ jobs:
             artifacts/
             !**/hostname.txt
  job2:
-   name: JOB2
-   runs-on: ubuntu-slim
+  name: JOB2
+  needs: job1
+  runs-on: ubuntu-slim
    steps:
      - name: step-1
        run: |
