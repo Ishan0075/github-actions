@@ -73,6 +73,10 @@ jobs:
        run: |
           echo "[INFO]env type is $ENV_TYPE with app user $APP_USER"
           echo "[INFO]once deployed app will be running on port $APP_PORT"
+     - name: refering repo secret
+       run: |
+          echo "refering repo secret"
+          echo "secret value is ${{ secrets.APP_PASS }}"
 
 
 #  job3:
