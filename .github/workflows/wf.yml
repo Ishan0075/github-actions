@@ -144,4 +144,3 @@ jobs:
 #          echo "single file content"
 #          ls -lrt single_file
 #          echo "checking directory artifact content"
-#          ls -lrt download_directory
