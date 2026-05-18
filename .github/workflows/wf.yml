@@ -4,144 +4,25 @@ on:
   push:
    branches:
     - main
-    - dev
   pull_request:
    branches:
     - main
     # - dev
-
-env:
-   ENV_TYPE: Dev
-   APP_USER: ishan0075
-   APP_PORT: 80
-
-
 jobs:
- job1:
-   name: JOB1
-   runs-on: ubuntu-slim
-   steps:
-     - name: checking the current directory
-       run: |
-          pwd
-          ls -lrt
-          hostname
-     - name: checkout
-       uses: actions/checkout@v5.0.0
-     - name: step-3
-       run: |
-         echo `pwd` >> myartifact.txt
-         mkdir artifacts
-         echo `ls -lrt` >> artifacts/list.txt
-         echo `hostname` >> artifacts/hostname.txt
-     - name: upload-artifact
-       uses: actions/upload-artifact@v5.0.0
-       with:
-         name: single_file
-         path: ./myartifact.txt
-     - name: upload from directory
-       uses: actions/upload-artifact@v5.0.0
-       with:
-         name: directory_artifacts
-         path: artifacts/
-     - name: upload from multiple paths with exclusions
-       uses: actions/upload-artifact@v5.0.0
-       with:
-          name: multiple_paths_with_exclusions
-          path: |
-            ./myartifact.txt
-            artifacts/
-            !**/hostname.txt
- job2:
-  name: JOB2
-  needs: job1
-  runs-on: ubuntu-slim
-  steps:
-     - name: checking the current directory
-       run: |
-          pwd
-          ls -lrt
-     - name: download-artifact
-       uses: actions/download-artifact@v5.0.0
-       with:
-         name: single_file  
-     - name: checking current directory post downlaod
-       run: |
-         pwd
-         ls -lrt
-     - name: refering env variable
-       run: |
-          echo "[INFO]env type is $ENV_TYPE with app user $APP_USER"
-          echo "[INFO]once deployed app will be running on port $APP_PORT"
-     - name: refering repo secret
-       run: |
-          echo "refering repo secret"
-          echo "secret value is ${{ secrets.APP_PASS }}"
-
- job3:
-  name: JOB3
-  needs: job1
-  runs-on: ubuntu-slim
-  steps:
-    - name: refering context or in-built variables
-      run: |
-        echo "[INFO] new changes done by  by ${{ github.actor }} in ${{ github.ref_name }}"
-        echo "[INFO] current step is running on ${{ runner.os }}"
-        echo "[INFO] Current job  ID is ${{ job.check_run_id }}"
-
- staging:
-  name: stag_deploy
-  needs: job1
-  runs-on: ubuntu-slim
-  steps:
-     - name: refering env variable
-       run: echo "[INFO] running deployment on ${{ vars.HOST }} using ${{ vars.USER }}" 
-     - name: referencing env secrets
-       run: echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}"
-  environment:
-     name: STAGING
-  if: github.ref == 'refs/heads/dev' # this job will run only when the changes are pushed to dev branch
-
-
- production:
-  name: prod_deploy
-  needs: job1
-  runs-on: ubuntu-slim
-  steps:
-     - name: refering env variable
-       run: echo "[INFO] running deployment on ${{ vars.HOST }} using ${{ vars.USER }}" 
-     - name: referencing env secrets
-       run: echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}"
-  environment:
-     name: PRODUCTION
-  if: github.ref == 'refs/heads/main' # this job will run only when the changes are pushed to main branch
-#  job4:
-#   name: JOB4
-#   needs: job1
-#   runs-on: ubuntu-slim
-#   steps:
-#      - name: checking custom folder for download
-#        run: |
-#           mkdir -p single_file
-#           mkdir -p download_directory
-#      - name: checking the current directory
-#        run: |
-#           pwd
-#           ls -lrt 
-#      - name: Download single file artifact
-#        uses: actions/download-artifact@v5.0.0
-#        with:
-#          name: single_file
-#          path: single_file
-
-#      - name: Download directory artifact
-#        uses: actions/download-artifact@v5.0.0
-#        with:
-#           name: directory_artifacts
-#           path: download_directory
-#      - name: checking current directory post downlaod
-#        run: |
-#          pwd
-#          echo "single file content"
-#          ls -lrt single_file
-#          echo "checking directory artifact content"
+  unit-tests:
+    name: running unit test
+    runs-on: ubuntu-slim
+    steps:
+      - name: checkout code
+        uses: action/checkout@v5.0.0
+      - name: setup python
+        uses: action/setup-python@v6.0.0
+        with:
+          python-version: '3.10'
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run unit tests
+        run: pytest -v
+          
