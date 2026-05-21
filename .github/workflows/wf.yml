@@ -121,7 +121,7 @@ jobs:
       - name: download the image
         uses: actions/download-artifact@v5.0.0
         with:
-          name: my-first-app_image
+          name: docker-image
           path: .
       - name: load docker image
         run: docker load -i my-first-app.tar
