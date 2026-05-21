@@ -96,16 +96,17 @@ jobs:
         id: vars
         run: |
              IMAGE_TAG="${{ github.run_id }}"
-             echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+             echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
       - name: Build Image (no push)
         uses: docker/build-push-action@v5.0.0
         with:
           context: .
           file: ./Dockerfile
           push: false
+          load: true
           tags: my-first-app:${{ steps.vars.outputs.IMAGE_TAG }}
       - name: save docker image as artifact
-        run: docker save image my-first-app:${{ steps.vars.outputs.IMAGE_TAG }} -o my-first-app.tar
+        run: docker save my-first-app:${{ steps.vars.outputs.IMAGE_TAG }} -o my-first-app.tar
       - name: upload docker image artifact
         uses: actions/upload-artifact@v5.0.0
         with:
