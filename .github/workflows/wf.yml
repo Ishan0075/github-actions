@@ -33,34 +33,34 @@ jobs:
         with:
           name: unit-test-report
           path: reports/     
-  # codeql:
-  #     name: codeQl security scan
-  #     runs-on: ubuntu-slim
-  #     permissions:
-  #       contents: read
-  #       actions: read
-  #       security-events: write
-  #     strategy:
-  #       matrix:  
-  #         language: [ 'python']
-  #     steps:
-  #       - name: checkout code
-  #         uses: actions/checkout@v5.0.0
+  codeql:
+      name: codeQl security scan
+      runs-on: ubuntu-slim
+      permissions:
+        contents: read
+        actions: read
+        security-events: write
+      strategy:
+        matrix:  
+          language: [ 'python']
+      steps:
+        - name: checkout code
+          uses: actions/checkout@v5.0.0
 
-  #       - name: initialize codeql
-  #         uses: github/codeql-action/init@v3
-  #         with:
-  #           languages: ${{ matrix.language }}
+        - name: initialize codeql
+          uses: github/codeql-action/init@v3
+          with:
+            languages: ${{ matrix.language }}
 
-  #       - name: perform codeql analysis
-  #         uses: github/codeql-action/analyze@v3
-  #         with:
-  #           category: 'security'
+        - name: perform codeql analysis
+          uses: github/codeql-action/analyze@v3
+          with:
+            category: 'security'
 
   sonarqube:
     name: SonarQube
     needs: unit-tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v5.0.0 # v4.3.1
         with:
@@ -79,3 +79,35 @@ jobs:
         uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build:
+    name: Build and push Docker image
+    needs: [sonarqube, codeql]
+    runs-on: ubuntu-slim
+    if: success()
+    outputs:
+      image-tag: ${{ steps.vars.outputs.IMAGE_TAG }}
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5.0.0
+      - name: setup docker buildx
+        uses: docker/setup-buildx-action@v3.0.0
+      - name: generate image tags
+        id: vars
+        run: |
+             IMAGE_TAG="${{ github.run_id }}-${{ GITHUB_SHA:0:7 }}"
+             echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+      - name: Build Image (no push)
+        uses: docker/build-push-action@v5.0.0
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: my-first-app:${{ steps.vars.outputs.IMAGE_TAG }}
+      - name: save docker image as artifact
+        run: docker save image my-first-app:${{ steps.vars.outputs.IMAGE_TAG }} -o my-first-app.tar
+      - name: upload docker image artifact
+        uses: actions/upload-artifact@v5.0.0
+        with:
+          name: docker-image
+          path: my-first-app.tar
