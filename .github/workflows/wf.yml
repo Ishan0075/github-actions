@@ -1,5 +1,5 @@
 name: myfirst
-#to push anything to this branch
+#to push anything
 on: 
   push:
    branches:
