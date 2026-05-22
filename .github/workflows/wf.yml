@@ -9,6 +9,12 @@ on:
    branches:
     - main
     # - dev
+
+permissions:
+  actions: read
+  contents: read
+  packages: write
+  security-events: write
 jobs:
   ci-pipeline-job:
     uses: Ishan0075/reusable-gh/.github/workflows/ci-pipeline.yml@main
