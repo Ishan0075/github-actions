@@ -3,7 +3,7 @@ name: myfirst
 on: 
   push:
    branches:
-    - main
+    - release
     - dev
   pull_request:
    branches:
