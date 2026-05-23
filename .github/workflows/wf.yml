@@ -143,7 +143,7 @@ jobs:
     name: Publish Docker image to GHCR
     needs: build
     runs-on: ubuntu-latest    
-    prmissions:
+    permissions:
       contents: read
       packages: write
     steps:
