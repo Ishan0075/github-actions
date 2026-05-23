@@ -143,6 +143,9 @@ jobs:
     name: Publish Docker image to GHCR
     needs: build
     runs-on: ubuntu-latest    
+    prmissions:
+      contents: read
+      packages: write
     steps:
       - name: download the image
         uses: actions/download-artifact@v5.0.0
