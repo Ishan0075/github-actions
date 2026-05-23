@@ -9,16 +9,133 @@ on:
    branches:
     - main
     # - dev
-
-permissions:
-  actions: read
-  contents: read
-  packages: write
-  security-events: write
 jobs:
-  ci-pipeline-job:
-    uses: Ishan0075/reusable-gh/.github/workflows/ci-pipeline.yml@main
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  unit-tests:
+    name: running unit test
+    runs-on: arc-demo
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5.0.0
+      - name: setup python
+        uses: actions/setup-python@v6.0.0
+        with:
+          python-version: '3.10'
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run unit tests
+        run:  |
+          mkdir reports/
+          pytest --junitxml=reports/unit-test-results.xml --cov=./ --cov-report=xml:reports/coverage.xml  --cov-report=term-missing -v
+      - name: upload code coverage report
+        uses: actions/upload-artifact@v5.0.0
+        with:
+          name: unit-test-report
+          path: reports/     
+  codeql:
+      name: codeQl security scan
+      runs-on: arc-demo
+      needs: unit-tests
+      permissions:
+        contents: read
+        actions: read
+        security-events: write
+      strategy:
+        matrix:  
+          language: [ 'python']
+      steps:
+        - name: checkout code
+          uses: actions/checkout@v5.0.0
+
+        - name: initialize codeql
+          uses: github/codeql-action/init@v3
+          with:
+            languages: ${{ matrix.language }}
+
+        - name: perform codeql analysis
+          uses: github/codeql-action/analyze@v3
+          with:
+            category: 'security'
+
+  # sonarqube:
+  #   name: SonarQube
+  #   needs: unit-tests
+  #   runs-on: ubuntu-slim
+  #   steps:
+  #     - uses: actions/checkout@v5.0.0
+  #       with:
+  #         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+  #     - name: download code coverage report
+  #       uses: actions/download-artifact@v5.0.0
+  #       with:
+  #         name: unit-test-report
+  #         path: reports/
+  #     - name: SonarQube Scan
+  #       uses: SonarSource/sonarqube-scan-action@v6
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  #     - name: SonarQube Quality Gate Check
+  #       uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # build:
+  #   name: Build and push Docker image
+  #   needs: [sonarqube, codeql]
+  #   runs-on: ubuntu-latest
+  #   if: success()
+  #   outputs:
+  #     image-tag: ${{ steps.vars.outputs.IMAGE_TAG }}
+  #   steps:
+  #     - name: checkout code
+  #       uses: actions/checkout@v5.0.0
+  #     - name: setup docker buildx
+  #       uses: docker/setup-buildx-action@v3.0.0
+  #     - name: generate image tags
+  #       id: vars
+  #       run: |
+  #            IMAGE_TAG="${{ github.run_id }}"
+  #            echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+  #     - name: Build Image (no push)
+  #       uses: docker/build-push-action@v5.0.0
+  #       with:
+  #         context: .
+  #         file: ./Dockerfile
+  #         push: false
+  #         load: true
+  #         tags: my-first-app:${{ steps.vars.outputs.IMAGE_TAG }}
+  #     - name: save docker image as artifact
+  #       run: docker save my-first-app:${{ steps.vars.outputs.IMAGE_TAG }} -o my-first-app.tar
+  #     - name: upload docker image artifact
+  #       uses: actions/upload-artifact@v5.0.0
+  #       with:
+  #         name: docker-image
+  #         path: my-first-app.tar
+
+  # publish-dockerhub:
+  #   name: Publish Docker image to DockerHub
+  #   needs: build
+  #   runs-on: ubuntu-latest    
+  #   steps:
+  #     - name: download the image
+  #       uses: actions/download-artifact@v5.0.0
+  #       with:
+  #         name: docker-image
+  #         path: .
+  #     - name: load docker image
+  #       run: docker load -i my-first-app.tar
+  #     - name: docker login
+  #       uses: docker/login-action@v3.0.0
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: tag image
+  #       run: |
+  #         IMAGE_TAG="${{ needs.build.outputs.image-tag }}"
+  #         docker image tag my-first-app:${IMAGE_TAG} ${{ secrets.DOCKERHUB_USERNAME }}/my-first-app:${IMAGE_TAG}
+  #     - name: push image
+  #       run: |
+  #         IMAGE_TAG="${{ needs.build.outputs.image-tag }}"
+  #         docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-first-app:${IMAGE_TAG}
