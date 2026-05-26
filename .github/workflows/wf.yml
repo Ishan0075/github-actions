@@ -82,7 +82,7 @@ jobs:
 
   build:
     name: Build and push Docker image
-    needs: [sonarqube, codeql]
+    needs: sonarqube
     runs-on: ubuntu-latest
     if: success()
     outputs:
