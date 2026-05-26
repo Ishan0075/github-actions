@@ -170,3 +170,12 @@ jobs:
           IMAGE_TAG="${{ needs.build.outputs.image-tag }}"
           OWNER="${{ github.repository_owner }}"
           docker push ghcr.io/${OWNER,,}/my-first-app:${IMAGE_TAG}
+
+deploy-with-kuebernetes:
+    name: Deploy with Kubernetes
+    needs: publish-ghcr
+    runs-on: github-actions-scaleset-demot
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v3
+
