@@ -142,7 +142,7 @@ jobs:
 
   publish-ghcr:
     name: Publish Docker image to GHCR
-    needs: publish-dockerhub
+    needs: [publish-dockerhub, build]
     runs-on: ubuntu-latest    
     permissions:
       contents: read
