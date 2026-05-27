@@ -192,6 +192,12 @@ jobs:
         run: |
          mkdir -p $HOME/.kube
          echo "$KUBECONFIG_DATA" > $HOME/.kube/config
+         echo "--- file type ---"
+         file $HOME/.kube/config
+         echo "--- line count ---"
+         wc -l $HOME/.kube/config
+         echo "--- first char hex ---"
+         head -c 1 $HOME/.kube/config | xxd
          kubectl version
          kubectl get nodes
 
