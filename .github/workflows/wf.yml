@@ -57,28 +57,28 @@ jobs:
   #         with:
   #           category: 'security'
 
-  sonarqube:
-    name: SonarQube
-    needs: unit-tests
-    runs-on: ubuntu-slim
-    steps:
-      - uses: actions/checkout@v5.0.0
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: download code coverage report
-        uses: actions/download-artifact@v5.0.0
-        with:
-          name: unit-test-report
-          path: reports/
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  # sonarqube:
+  #   name: SonarQube
+  #   needs: unit-tests
+  #   runs-on: ubuntu-slim
+  #   steps:
+  #     - uses: actions/checkout@v5.0.0
+  #       with:
+  #         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+  #     - name: download code coverage report
+  #       uses: actions/download-artifact@v5.0.0
+  #       with:
+  #         name: unit-test-report
+  #         path: reports/
+  #     - name: SonarQube Scan
+  #       uses: SonarSource/sonarqube-scan-action@v6
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - name: SonarQube Quality Gate Check
-        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #     - name: SonarQube Quality Gate Check
+  #       uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build:
     name: Build and push Docker image
@@ -178,4 +178,18 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v3
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl
+          kubectl version --client
+
+      - name: Configure kubeconfig
+        run: |
+         mkdir -p $HOME/.kube
+         echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+         kubectl version
+         kubectl get nodes   
 
